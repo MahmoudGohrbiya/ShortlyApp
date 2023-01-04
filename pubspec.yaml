@@ -39,6 +39,18 @@ dependencies:
   flutter_svg: ^1.0.3
   get: ^4.6.1
   hsluv: ^1.1.2
+  bloc: ^8.0.3
+  dio: ^4.0.6
+  retrofit: ^3.0.1+1
+  http_parser: ^4.0.0
+  json_annotation: ^4.1.0
+  json_serializable: ^6.2.0
+  build_runner: ^2.1.2
+  retrofit_generator: any
+  flutter_bloc: ^8.0.1
+  pretty_dio_logger: ^1.1.1
+  shared_preferences: ^2.0.7
+
 
 dev_dependencies:
   flutter_test:

@@ -1,9 +1,7 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:shortly/AppComponents/text_field_container.dart';
 import 'package:shortly/Constants/constants.dart';
-
 
 class RoundedInputField extends StatefulWidget {
   final String? hintText;
@@ -29,7 +27,6 @@ class RoundedInputField extends StatefulWidget {
   final Color? SufficonColor;
   final double? FontSize;
 
-
   const RoundedInputField(
       {key,
       this.hintText,
@@ -50,9 +47,9 @@ class RoundedInputField extends StatefulWidget {
       this.onTapIcon,
       this.maxLength,
       this.Sufficon,
-        this.onTapSuffIcon,
-        this.SufficonColor,
-        this.FontSize,
+      this.onTapSuffIcon,
+      this.SufficonColor,
+      this.FontSize,
       this.OntapInput})
       : super(key: key);
 
@@ -113,7 +110,8 @@ class _RoundedInputFieldState extends State<RoundedInputField> {
                   color: widget.hintColor ?? Colors.black, fontSize: 13),
               prefixIcon: widget.icon != null
                   ? IconButton(
-                      padding: EdgeInsets.only(left: 3,right: 3,top:Platform.isIOS? 0:5),
+                      padding: EdgeInsets.only(
+                          left: 3, right: 3, top: Platform.isIOS ? 0 : 5),
                       onPressed: widget.onTapIcon,
                       icon: Row(
                         children: [

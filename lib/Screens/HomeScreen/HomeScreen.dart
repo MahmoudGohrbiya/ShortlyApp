@@ -5,6 +5,8 @@ import 'package:shortly/Screens/HomeScreen/Components/BodyContent/GetStartSectio
 import 'package:shortly/Screens/HomeScreen/Components/BodyContent/ShortLinkSection.dart';
 import '../../Constants/constants.dart';
 import '../../controllers/MenuController.dart';
+import 'Components/BodyContent/BoostLinkSection.dart';
+import 'Components/BodyContent/FooterSection.dart';
 import 'Components/header.dart';
 import 'Components/side_menu.dart';
 
@@ -29,7 +31,6 @@ class HomeScreen extends StatelessWidget {
                 padding: EdgeInsets.all(kDefaultPadding),
                 constraints: BoxConstraints(maxWidth: kMaxWidth),
                 child: Container(child: GetStartSection()),
-
               ),
               Container(
                 alignment: Alignment.center,
@@ -41,6 +42,18 @@ class HomeScreen extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Container(
                   child: AdvanceStatisticSection(),
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                child: Container(
+                  child: BoostLinkSection(),
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                child: Container(
+                  child: FooterSection(),
                 ),
               ),
             ],

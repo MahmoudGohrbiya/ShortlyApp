@@ -1,11 +1,15 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
+import 'package:shortly/AppStates/ShortyStats/Shortly_State.dart';
+import 'package:shortly/Blocs/AppBlocs/ShortlyBlocs/Shortly_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shortly/Helpers/AppPref.dart';
 import '../../../../AppComponents/rounded_button.dart';
 import '../../../../AppComponents/rounded_input_field.dart';
 import '../../../../Constants/constants.dart';
 import '../../../../responsive.dart';
+import 'package:shortly/Utils/appSnackbar.dart';
 
 class ShortLinkSection extends StatefulWidget {
   @override
@@ -18,7 +22,13 @@ class _ShortLinkSection extends State<ShortLinkSection> {
   TextEditingController LinkController = new TextEditingController();
   bool? CheckEmpty = false;
 
+  Shortly_cubit _shortly_cubit = new Shortly_cubit();
   List<Map<String, dynamic>> CardShortly = [];
+
+  bool? isLoading = false;
+  bool? enable = true;
+
+  String? encodeList = "";
 
   @override
   void initState() {
@@ -27,145 +37,64 @@ class _ShortLinkSection extends State<ShortLinkSection> {
   }
 
   _getSavedCard() async {
-    // await IdentityManager().getToken().then((value) => token = value!);
-    // await IdentityManager()
-    //     .getLoggedUserId()
-    //     .then((value) => UserId = int.parse(value!));
-    // _HomePages_cubit.GetAgendaUser(token!, UserId!);
-
-    CardShortly.add({
-      "Id": 1,
-      "LongLink": "https://www.frontendmentor.io"
-          "",
-      "index": 0,
-      "ShortLink": "https://rel.ink/k4lKyk",
-      "Selected": false
-    });
-    CardShortly.add({
-      "Id": 2,
-      "LongLink": "https://www.frontendmentor.io"
-          "",
-      "index": 1,
-      "ShortLink": "https://rel.ink/k4lKyk",
-      "Selected": false
-    });
-    CardShortly.add({
-      "Id": 3,
-      "LongLink": "https://www.frontendmentor.io"
-          "",
-      "index": 2,
-      "ShortLink": "https://rel.ink/k4lKyk",
-      "Selected": false
+    await AppPref().getShortList().then((value) => encodeList = value!);
+    Future.delayed(Duration(milliseconds: 400), () {
+      CardShortly = List<Map<String, dynamic>>.from(jsonDecode(encodeList!));
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => _shortly_cubit,
+      child: BlocConsumer<Shortly_cubit, Shortly_State>(
+        listener: (context, stateEvent) {
+          if (stateEvent is ShortlyError) {
+            isLoading = false;
+            enable = true;
+            AppSnackBar().showSnackBar(stateEvent.message, () {}, context);
+          }
+        },
+        builder: (context, state) {
+          if (state is ShortlyInitial) {
+            return _buildUi(context);
+          } else if (state is ShortlyLoading) {
+            isLoading = true;
+            enable = false;
+            return _buildUi(context);
+          } else if (state is ShortlyCompleted) {
+            if (state.response != null && enable == false) {
+              if (state.response!.ok == true) {
+                CardShortly.add({
+                  "Id": CardShortly.length + 1,
+                  "LongLink": state.response!.result!.original_link ?? "",
+                  "index": CardShortly.length + 1,
+                  "ShortLink": state.response!.result!.full_short_link,
+                  "Selected": false
+                });
+              }
+            }
+            isLoading = false;
+            enable = true;
+            return _buildUi(context);
+          } else {
+            return _buildUi(context);
+          }
+        },
+      ),
+    );
+  }
+
+  _buildUi(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Container(
       alignment: Alignment.center,
       child: Stack(
         children: [
           Container(
-            height: size.height *0.4 ,
-            margin: EdgeInsets.only(top: size.height * 0.08),
-            width: size.width,
-            color: Bg_ShorLinkList_Color,
-            child: Container(
-              margin: EdgeInsets.only(
-                  top: Responsive.isDesktop(context)
-                      ? size.height * 0.14
-                      : size.height * 0.2,
-                  left: size.width * 0.1,
-                  right: size.width * 0.1),
-              child: ListView.builder(
-                itemCount: 20,
-                itemBuilder: (context, index) {
-                  return Container(
-                    child: Card(
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        child: Flex(
-                          direction: Responsive.isDesktop(context)
-                              ? Axis.horizontal
-                              : Axis.vertical,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              child: Text(
-                                CardShortly[0]['LongLink'],
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black.withOpacity(0.6)),
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 5),
-                            ),
-                            !Responsive.isDesktop(context)
-                                ? Divider()
-                                : SizedBox(),
-                            Container(
-                                child: Flex(
-                              direction: Responsive.isDesktop(context)
-                                  ? Axis.horizontal
-                                  : Axis.vertical,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.symmetric(vertical: 5),
-                                  child: Text(
-                                    CardShortly[0]['ShortLink'],
-                                    style: TextStyle(color: PrimaryCyanColor),
-                                  ),
-                                ),
-                                !Responsive.isDesktop(context)
-                                    ? SizedBox(
-                                        height: 10,
-                                      )
-                                    : SizedBox(
-                                        width: 15,
-                                      ),
-                                RoundedButton(
-                                  color: CardShortly[0]['Selected'] == false
-                                      ? ButtonColor
-                                      : Colors.black,
-                                  enabled: true,
-                                  isLoading: false,
-                                  buttonName:
-                                      CardShortly[0]['Selected'] == false
-                                          ? "Copy"
-                                          : "Copied!",
-                                  height: 33,
-                                  cornerRadius: 10,
-                                  width: Responsive.isDesktop(context)
-                                      ? 100
-                                      : size.width * 0.66,
-                                  press: () {
-                                    setState(() {
-                                      for (int i = 0;
-                                          i < CardShortly.length;
-                                          i++)
-                                        CardShortly[i]['Selected'] = false;
-
-                                      CardShortly[0]['Selected'] = true;
-                                      Clipboard.setData(ClipboardData(
-                                          text: CardShortly[0]
-                                              ['ShortLink']));
-                                    });
-                                  },
-                                ),
-                              ],
-                            )),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-          Container(
-            height: size.height *0.4 ,
+            height: Responsive.isDesktop(context)
+                ? size.height * 0.4
+                : size.height * 0.6,
             margin: EdgeInsets.only(top: size.height * 0.08),
             width: size.width,
             color: Bg_ShorLinkList_Color,
@@ -203,56 +132,58 @@ class _ShortLinkSection extends State<ShortLinkSection> {
                                 ? Divider()
                                 : SizedBox(),
                             Container(
-                                child: Flex(
-                                  direction: Responsive.isDesktop(context)
-                                      ? Axis.horizontal
-                                      : Axis.vertical,
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.symmetric(vertical: 5),
-                                      child: Text(
-                                        CardShortly[index]['ShortLink'],
-                                        style: TextStyle(color: PrimaryCyanColor),
-                                      ),
+                              child: Flex(
+                                direction: Responsive.isDesktop(context)
+                                    ? Axis.horizontal
+                                    : Axis.vertical,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(vertical: 5),
+                                    child: Text(
+                                      CardShortly[index]['ShortLink'],
+                                      style: TextStyle(color: PrimaryCyanColor),
                                     ),
-                                    !Responsive.isDesktop(context)
-                                        ? SizedBox(
-                                      height: 10,
-                                    )
-                                        : SizedBox(
-                                      width: 15,
-                                    ),
-                                    RoundedButton(
-                                      color: CardShortly[index]['Selected'] == false
-                                          ? ButtonColor
-                                          : Colors.black,
-                                      enabled: true,
-                                      isLoading: false,
-                                      buttonName:
-                                      CardShortly[index]['Selected'] == false
-                                          ? "Copy"
-                                          : "Copied!",
-                                      height: 33,
-                                      cornerRadius: 10,
-                                      width: Responsive.isDesktop(context)
-                                          ? 100
-                                          : size.width * 0.66,
-                                      press: () {
-                                        setState(() {
-                                          for (int i = 0;
-                                          i < CardShortly.length;
-                                          i++)
-                                            CardShortly[i]['Selected'] = false;
+                                  ),
+                                  !Responsive.isDesktop(context)
+                                      ? SizedBox(
+                                          height: 10,
+                                        )
+                                      : SizedBox(
+                                          width: 15,
+                                        ),
+                                  RoundedButton(
+                                    color:
+                                        CardShortly[index]['Selected'] == false
+                                            ? PrimaryCyanColor
+                                            : Colors.black,
+                                    enabled: true,
+                                    isLoading: false,
+                                    buttonName:
+                                        CardShortly[index]['Selected'] == false
+                                            ? "Copy"
+                                            : "Copied!",
+                                    height: 33,
+                                    cornerRadius: 10,
+                                    width: Responsive.isDesktop(context)
+                                        ? 100
+                                        : size.width * 0.66,
+                                    press: () {
+                                      setState(() {
+                                        for (int i = 0;
+                                            i < CardShortly.length;
+                                            i++)
+                                          CardShortly[i]['Selected'] = false;
 
-                                          CardShortly[index]['Selected'] = true;
-                                          Clipboard.setData(ClipboardData(
-                                              text: CardShortly[index]
-                                              ['ShortLink']));
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                )),
+                                        CardShortly[index]['Selected'] = true;
+                                        Clipboard.setData(ClipboardData(
+                                            text: CardShortly[index]
+                                                ['ShortLink']));
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -326,27 +257,35 @@ class _ShortLinkSection extends State<ShortLinkSection> {
                             : SizedBox(),
                         RoundedButton(
                           color: ButtonColor,
-                          enabled: true,
-                          isLoading: false,
+                          enabled: enable,
+                          isLoading: isLoading,
                           buttonName: "Shorten it!",
                           height: 48,
                           cornerRadius: 10,
                           width: Responsive.isDesktop(context)
                               ? 140
                               : size.width * 0.66,
-                          press: () {
-                            setState(() {
-                              CheckEmpty = !CheckEmpty!;
-                            });
+                          press: () async {
+                            if (LinkController.text.toString().length > 0) {
+                              CheckEmpty = false;
+
+                              await _shortly_cubit.GetShortLink(
+                                  LinkController.text);
+
+                              Future.delayed(Duration(seconds: 1), () async {
+                                String List_Encoded = json.encode(CardShortly);
+                                await AppPref()
+                                    .saveShortList(Data: List_Encoded);
+                              });
+                            } else {
+                              CheckEmpty = true;
+                            }
                           },
                           nHover: (value) {
                             setState(() {
-                              ButtonColor = Colors.black;
-                              print("truuu");
-                              print(value);
-                              if (value == true) {
-                                print("truuu");
-                              }
+                              value == true
+                                  ? ButtonColor = Hover_Button_Color
+                                  : ButtonColor = PrimaryCyanColor;
                             });
                           },
                         ),

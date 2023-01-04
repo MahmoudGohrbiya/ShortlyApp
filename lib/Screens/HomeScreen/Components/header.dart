@@ -18,6 +18,8 @@ class _Header extends State<Header> {
 
   Color? ButtonColor = PrimaryCyanColor;
 
+  bool? isHover = false;
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -52,7 +54,8 @@ class _Header extends State<Header> {
                                 "Login",
                                 style: TextStyle(
                                     color: Colors.black.withOpacity(0.5),
-                                    fontWeight: FontWeight.w600,fontFamily: AppFontFamily),
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: AppFontFamily),
                               ),
                               SizedBox(
                                 width: size.width * 0.01,
@@ -65,14 +68,12 @@ class _Header extends State<Header> {
                                 buttonName: "sign Up",
                                 height: size.height * 0.05,
                                 width: 140,
+                                press: () {},
                                 nHover: (value) {
                                   setState(() {
-                                    ButtonColor = Colors.black;
-                                    print("truuu");
-                                    print(value);
-                                    if (value == true) {
-                                      print("truuu");
-                                    }
+                                    value == true
+                                        ? ButtonColor = Hover_Button_Color
+                                        : ButtonColor = PrimaryCyanColor;
                                   });
                                 },
                               ),

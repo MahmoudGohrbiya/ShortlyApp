@@ -13,6 +13,11 @@ var Neutral_VeryDarkBlue_Color = HexColor("#35323e");
 var Neutral_VeryDarkViolet_Color =HexColor("#232127");
 
 var Bg_ShorLinkList_Color = HexColor("#eff1f7");
+var Hover_Button_Color = HexColor("#8fd4d2");
+var Footer_BG_Color = HexColor("#222028");
+
+
+
 const kDefaultPadding = 20.0;
 const kMaxWidth = 1232.0;
 const kDefaultDuration = Duration(milliseconds: 250);

@@ -6,6 +6,7 @@ class TextFieldContainer extends StatelessWidget {
   final double? height;
   final double? cornerRadius;
   final bool? IsBorderColor;
+  final Color? BorderColor;
 
   const TextFieldContainer(
       {@required key,
@@ -13,7 +14,8 @@ class TextFieldContainer extends StatelessWidget {
       this.width,
       this.height,
       this.IsBorderColor,
-      this.cornerRadius})
+      this.cornerRadius,
+      this.BorderColor})
       : super(key: key);
 
   @override
@@ -27,12 +29,8 @@ class TextFieldContainer extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(cornerRadius ?? 10),
         border: Border.all(
-          color: IsBorderColor != null
-              ? (IsBorderColor == true
-                  ? Colors.black.withOpacity(0.1)
-                  : Colors.white)
-              : Colors.white,
-          width: 1,
+          color: BorderColor ?? Colors.white,
+          width: 3,
         ),
       ),
       child: child,

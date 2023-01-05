@@ -225,6 +225,7 @@ class _ShortLinkSection extends State<ShortLinkSection> {
                                     hintText: "shorten a link here.",
                                     keyboardtype: TextInputType.text,
                                     hintColor: Colors.black.withOpacity(0.4),
+                                    BorderColor: CheckEmpty == true? Colors.red:Colors.white,
                                   ),
                                   margin: EdgeInsets.symmetric(
                                       horizontal: size.width * 0.02),

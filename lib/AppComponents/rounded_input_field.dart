@@ -26,6 +26,7 @@ class RoundedInputField extends StatefulWidget {
   final IconData? Sufficon;
   final Color? SufficonColor;
   final double? FontSize;
+  final Color? BorderColor;
 
   const RoundedInputField(
       {key,
@@ -50,7 +51,8 @@ class RoundedInputField extends StatefulWidget {
       this.onTapSuffIcon,
       this.SufficonColor,
       this.FontSize,
-      this.OntapInput})
+      this.OntapInput,
+      this.BorderColor})
       : super(key: key);
 
   @override
@@ -75,18 +77,19 @@ class _RoundedInputFieldState extends State<RoundedInputField> {
         height: widget.height ?? size.height * 0.055,
         IsBorderColor: widget.IsBorderColor,
         cornerRadius: widget.cornerRadius,
+        BorderColor: widget.BorderColor,
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(widget.cornerRadius ?? 10),
-            border: Border.all(
-              color: widget.IsBorderColor != null
-                  ? (widget.IsBorderColor == true
-                      ? Colors.black.withOpacity(0.1)
-                      : Colors.white)
-                  : Colors.white,
-              width: 1,
-            ),
+            // border: Border.all(
+            //   color: widget.IsBorderColor != null
+            //       ? (widget.IsBorderColor == true
+            //           ? Colors.black.withOpacity(0.1)
+            //           : Colors.white)
+            //       : Colors.white,
+            //   width: 1,
+            // ),
           ),
           child: TextField(
             onSubmitted: widget.on_submitted,
